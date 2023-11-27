@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Guessing Game</title>
+  <style>
+    body {
+      text-align: center;
+      padding: 50px;
+    }
+  </style>
+</head>
+<body>
+  <h1>Welcome to the Guessing Game!</h1>
+  <p>Enter a number:</p>
+  <input type="number" id="guessInput">
+  <button onclick="checkGuess()">Submit Guess</button>
+
+  <script>
+    function checkGuess() {
+      var userGuess = document.getElementById('guessInput').value;
+
+      // Send guess to the server (backend) for processing
+      fetch('https://latestmysteriouskernel.maksimmalbasa.repl.co/submitGuess', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify({ guess: userGuess })
+      })
+      .then(response => response.json())
+      .then(data => {
+        alert(data.message);
+        if (data.message.includes('Congratulations')) {
+          // If the user won, prompt for email
+          var userEmail = prompt('Enter your email:');
+          if (userEmail) {
+            // Send email to the server (backend) for processing
+            fetch('https://latestmysteriouskernel.maksimmalbasa.repl.co/submitEmail', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/json'
+              },
+              body: JSON.stringify({ email: userEmail })
+            })
+            .then(response => response.json())
+            .then(emailData => {
+              alert(emailData.message);
+            })
+            .catch(emailError => {
+              console.error('Error sending email:', emailError);
+            });
+          }
+        }
+      })
+      .catch(error => {
+        console.error('Error:', error);
+      });
+    }
+  </script>
+</body>
+</html>
